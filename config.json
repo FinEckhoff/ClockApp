@@ -1,5 +1,8 @@
 {
-  "Option1": null,
-  "Option2": 4,
-  "Option3": true
+  "n_upperRowPercentage": 65,
+  "n_scorePercentage": 60,
+  "b_ColorTimeScore": "128, 255, 0",
+  "b_ColorTimeout": "LightGray",
+  "n_defaultTime": 12,
+  "n_TimeoutTime": 2
 }

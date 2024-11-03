@@ -4,8 +4,10 @@ using System.IO;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+
 public partial class Form0 : Form
 {
+    public static Config currentConfig;
     public Form0()
     {
         InitializeComponent();
@@ -24,11 +26,14 @@ public partial class Form0 : Form
     }
     public class Config
     {
-        public string Option1 { get; set; }
-        public int Option2 { get; set; }
-        public bool Option3 { get; set; }
+        public int n_upperRowPercentage { get; set; }
+        public int n_scorePercentage { get; set; }
+        public Color b_ColorTimeScore { get; set; }
+        public Color b_ColorTimeout { get; set; }
+        public int n_defaultTime { get; set; }
+        public int n_TimeoutTime { get; set; }
     }
-    private Config currentConfig;
+    
     private readonly string configFilePath = "config.json";
 
     private void LoadConfig()
@@ -37,6 +42,10 @@ public partial class Form0 : Form
         {
             string json = File.ReadAllText(configFilePath);
             currentConfig = JsonConvert.DeserializeObject<Config>(json);
+
+
+
+
         }
         else
         {
@@ -45,13 +54,18 @@ public partial class Form0 : Form
 
         // Set UI elements based on loaded config
 
-        n_upperRowPercentage.Value = currentConfig.Option2;
+        n_upperRowPercentage.Value = currentConfig.n_upperRowPercentage;
 
     }
     private void SaveConfig()
     {
         currentConfig = new Config();
-        currentConfig.Option2 = (int)n_upperRowPercentage.Value;
+        currentConfig.n_upperRowPercentage = n_upperRowPercentage.Value;
+        currentConfig.n_scorePercentage = n_scorePercentage.Value;
+        currentConfig.b_ColorTimeScore = b_ColorTimeScoretmp;
+        currentConfig.b_ColorTimeout = b_ColorTimeouttmp;
+        currentConfig.n_defaultTime = (int)n_defaultTime.Value;
+        currentConfig.n_TimeoutTime = (int)n_TimeoutTime.Value;
 
 
         string json = JsonConvert.SerializeObject(currentConfig, Formatting.Indented);
@@ -63,7 +77,9 @@ public partial class Form0 : Form
     private void buttonSave_Click(object sender, EventArgs e)
     {
         SaveConfig();
+        this.Close();
     }
+    Color b_ColorTimeScoretmp = Color.Red; 
     private void choseColorTimeScore(object sender, EventArgs e)
     {
         ColorDialog cd = new ColorDialog();
@@ -72,10 +88,10 @@ public partial class Form0 : Form
         // Sets the initial color select to the current text color.
         if (cd.ShowDialog() == DialogResult.OK)
         {
-            var tmp = cd.Color;
+            b_ColorTimeScoretmp = cd.Color;
         }
     }
-
+    Color b_ColorTimeouttmp = Color.LightGray;
     private void choseColorTimeout(object sender, EventArgs e)
     {
         ColorDialog cd = new ColorDialog();
@@ -84,12 +100,16 @@ public partial class Form0 : Form
         // Sets the initial color select to the current text color.
         if (cd.ShowDialog() == DialogResult.OK)
         {
-            var tmp = cd.Color;
+            b_ColorTimeouttmp = cd.Color;
         }
     }
      private void n_upperRowPercentageChanged(object sender, EventArgs e)
     {
         l_upperRowPercentage.Text = "Zeitanzeige Größe (Prozent): " + n_upperRowPercentage.Value + "%";
+    }
+    private void n_scorePercentageChanged(object sender, EventArgs e)
+    {
+        l_scorePercentage.Text = "Score Breite (Prozent): " + n_scorePercentage.Value + "%";
     }
 
 }

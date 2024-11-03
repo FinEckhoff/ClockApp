@@ -3,29 +3,31 @@ using System;
 using System.Drawing;
 using System.Net.Http.Headers;
 using System.Windows.Forms;
+
 public partial class Form1 : Form
 {
     private Timer countdownTimer;
     private int timeLeft; // in seconds
     private Label timeLabel;
-    private int InitialTime = 12 * 60; // 12 minutes in seconds
+    private int InitialTime = Form0.currentConfig.n_defaultTime; // 12 minutes in seconds
     private int leftScore = 0;
     private int rightScore = 0;
 
+    private int InitialTimeout = Form0.currentConfig.n_TimeoutTime;
     private Label scoreLabel;
     private bool isFullscreen = false;
     private TableLayoutPanel layoutPanel;
 
     private Timer leftTimer, rightTimer;
-    private int leftTimeLeft = 120;
-    private int rightTimeLeft = 120;
+    private int leftTimeLeft;
+    private int rightTimeLeft;
     private Label leftTimerLabel, rightTimerLabel;
     private TableLayoutPanel bottomPanel;
-    private const float topRow = 60.0f;
-    private const float botRow = 40.0f; 
-    private const float timeoutLabelSize = 10.0f;
+    private float topRow = (float) Form0.currentConfig.n_upperRowPercentage;
+    private float botRow = 100.0f - Form0.currentConfig.n_upperRowPercentage; 
+    private float timeoutLabelSize = (100.0f - Form0.currentConfig.n_scorePercentage) / 2.0f;
 
-    public  Form1()
+    public Form1()
     {
         InitializeComponent();
         InitializeCountdown();
@@ -61,7 +63,7 @@ public partial class Form1 : Form
         // Set up the label to display the countdown time
         timeLabel = new Label
         {
-            ForeColor = Color.Red,
+            ForeColor = Color.FromArgb(Form0.currentConfig.b_ColorTimeScore.ToArgb()),
             BackColor = Color.Black,
             
             Dock = DockStyle.Fill,
@@ -94,7 +96,7 @@ public partial class Form1 : Form
         // Set up the left timer label
         leftTimerLabel = new Label
         {
-            ForeColor = Color.LightGray,
+            ForeColor = Color.FromArgb(Form0.currentConfig.b_ColorTimeout.ToArgb()),
             BackColor = Color.Black,
             Dock = DockStyle.Fill,
             TextAlign = ContentAlignment.TopRight,
@@ -106,7 +108,7 @@ public partial class Form1 : Form
         // Set up the right timer label
         rightTimerLabel = new Label
         {
-            ForeColor = Color.LightGray,
+            ForeColor = Color.FromArgb(Form0.currentConfig.b_ColorTimeout.ToArgb()),
             BackColor = Color.Black,
             Dock = DockStyle.Fill,
             TextAlign = ContentAlignment.TopLeft,
@@ -119,7 +121,7 @@ public partial class Form1 : Form
         // Set up the label to display the score in the bottom row, centered in the middle column
         scoreLabel = new Label
         {
-            ForeColor = Color.Red,
+            ForeColor = Color.FromArgb(Form0.currentConfig.b_ColorTimeScore.ToArgb()),
             BackColor = Color.Black,
             Dock = DockStyle.Fill,
             TextAlign = ContentAlignment.TopCenter,
@@ -283,84 +285,13 @@ public partial class Form1 : Form
 }
 
     
-    private void AdjustFontSize2()
-    {
-        int timeFontSize = 20; // Starting size for the time label
-        int scoreFontSize = 10; // Starting size for the score label
-        Font timeFont;
-        Font scoreFont;
-
-        // Measure available space for both labels in the layout panel
-        int availableWidth = layoutPanel.GetColumnWidths()[0];
-        int timeAvailableHeight = layoutPanel.GetRowHeights()[0];
-        int scoreAvailableHeight = layoutPanel.GetRowHeights()[1];
-        int availableScoreWidth = bottomPanel.GetColumnWidths()[1];
-
-        // Adjust the font size for the time label
-        while (true)
-        {
-            timeFont = new Font("Arial", timeFontSize, FontStyle.Bold);
-            Size timeTextSize = TextRenderer.MeasureText(timeLabel.Text, timeFont);
-
-            if (timeTextSize.Width <= availableWidth && timeTextSize.Height <= timeAvailableHeight)
-            {
-                // Increase the font size to maximize space
-                Font testTimeFont = new Font("Arial", timeFontSize + 1, FontStyle.Bold);
-                Size testTimeSize = TextRenderer.MeasureText(timeLabel.Text, testTimeFont);
-
-                if (testTimeSize.Width >= availableWidth || testTimeSize.Height >= timeAvailableHeight)
-                    break; // Stop if the next size would overflow
-
-                timeFontSize++; // Increase the font size and test again
-            }
-            else
-            {
-                timeFontSize--; // Reduce font size if it's too large
-                break;
-            }
-        }
-
-        // Adjust the font size for the score label
-        while (true)
-        {
-            scoreFont = new Font("Arial", scoreFontSize, FontStyle.Bold);
-            Size scoreTextSize = TextRenderer.MeasureText(scoreLabel.Text, scoreFont);
-
-            if (scoreTextSize.Width <= availableScoreWidth && scoreTextSize.Height <= scoreAvailableHeight)
-            {
-                // Increase the font size to maximize space
-                Font testScoreFont = new Font("Arial", scoreFontSize + 1, FontStyle.Bold);
-                Size testScoreSize = TextRenderer.MeasureText(scoreLabel.Text, testScoreFont);
-
-                if (testScoreSize.Width >= availableScoreWidth || testScoreSize.Height >= scoreAvailableHeight)
-                    break; // Stop if the next size would overflow
-
-                scoreFontSize++; // Increase the font size and test again
-            }
-            else
-            {
-                scoreFontSize--; // Reduce font size if it's too large
-                break;
-            }
-        }
-
-
-
-        
-        Font timeoutFont = new Font("Arial", MathF.Round(scoreFontSize / 3), FontStyle.Bold);
-        // Apply the calculated font sizes to the labels
-        timeLabel.Font = timeFont;
-        scoreLabel.Font = scoreFont;
-        leftTimerLabel.Font = timeoutFont;
-        rightTimerLabel.Font = timeoutFont;
-    }
 
     private void Form1_KeyDown(object sender, KeyEventArgs e)
     {
 
         if (e.Control && e.KeyCode == Keys.Left)
         {
-            leftTimeLeft = 2 * 60;
+            leftTimeLeft = InitialTimeout;
             leftTimer.Start();
             leftTimerLabel.Text = FormatTime(leftTimeLeft);
             
@@ -374,7 +305,7 @@ public partial class Form1 : Form
         }
         if (e.Control && e.KeyCode == Keys.Right)
         {
-            rightTimeLeft = 2 * 60;
+            rightTimeLeft = InitialTimeout;
             rightTimer.Start();
             rightTimerLabel.Text = FormatTime(rightTimeLeft);
             rightTimerLabel.Show();
@@ -415,8 +346,8 @@ public partial class Form1 : Form
             rightTimerLabel.Hide();
             leftTimer.Stop();
             leftTimerLabel.Hide();
-            leftTimeLeft = 2 * 60;
-            rightTimeLeft = 2 * 60;
+            leftTimeLeft = InitialTimeout;
+            rightTimeLeft = InitialTimeout;
             timeLeft = InitialTime;
             leftScore = 0;
             rightScore = 0;
@@ -462,12 +393,12 @@ public partial class Form1 : Form
         else if (e.Control && e.Shift && e.KeyCode == Keys.Left){
             leftTimer.Stop();
             leftTimerLabel.Hide();
-            leftTimeLeft = 2 * 60;
+            leftTimeLeft = InitialTimeout;
         }
         else if (e.Control && e.Shift && e.KeyCode == Keys.Right){
             rightTimer.Stop();
         rightTimerLabel.Hide();
-            rightTimeLeft = 2 * 60;
+            rightTimeLeft = InitialTimeout;
         }
 
         AdjustFontSize();

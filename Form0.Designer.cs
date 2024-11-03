@@ -29,6 +29,9 @@ partial class Form0
     /// 
     private Label l_upperRowPercentage;
     private TrackBar n_upperRowPercentage;
+    
+    private Label l_scorePercentage;
+    private TrackBar n_scorePercentage;
     private Button b_ColorTimeScore;
     private Button b_ColorTimeout;
 
@@ -47,7 +50,10 @@ partial class Form0
         this.l_upperRowPercentage = new Label();
         this.n_upperRowPercentage = new TrackBar();
 
-        
+        this.l_scorePercentage = new Label();
+        this.n_scorePercentage = new TrackBar();
+
+
         this.b_ColorTimeScore = new Button();
 
         this.b_ColorTimeout = new Button();
@@ -77,16 +83,44 @@ partial class Form0
         this.n_upperRowPercentage.TickFrequency = 1;
         this.n_upperRowPercentage.Scroll += new System.EventHandler(this.n_upperRowPercentageChanged);
         this.n_upperRowPercentage.Value = 65;
+
+
+
+        //________________________
+
+        this.l_scorePercentage.Location = new System.Drawing.Point(20, 100);
+        this.l_scorePercentage.Name = "l_scorePercentage";
+        this.l_scorePercentage.Size = new System.Drawing.Size(240, 20);
+        this.l_scorePercentage.Text = "Score Breite (Prozent): 60%";
+
+        // n_upperRowPercentage
+        this.n_scorePercentage.Location = new System.Drawing.Point(20, 120);
+        this.n_scorePercentage.Name = "n_upperRowPercentage";
+        this.n_scorePercentage.Size = new System.Drawing.Size(240, 20);
+        this.n_scorePercentage.TabIndex = 1;
+        this.n_scorePercentage.Maximum = 99;
+        this.n_scorePercentage.Minimum = 1;
+        this.n_scorePercentage.TickFrequency = 1;
+        this.n_scorePercentage.Scroll += new System.EventHandler(this.n_scorePercentageChanged);
+        this.n_scorePercentage.Value = 60;
+
+        //__________
+
+
+
+
+
+
         // c_TimeScore
         
-        this.b_ColorTimeScore.Location = new System.Drawing.Point(20, 100);
+        this.b_ColorTimeScore.Location = new System.Drawing.Point(20, 160);
         this.b_ColorTimeScore.Name = "b_ColorTimeScore";
         this.b_ColorTimeScore.Size = new System.Drawing.Size(240, 17);
         this.b_ColorTimeScore.TabIndex = 2;
         this.b_ColorTimeScore.Text = "Farbe auswählen (Zeit und Spielstand)";
         this.b_ColorTimeScore.Click += new System.EventHandler(this.choseColorTimeScore);
 
-        this.b_ColorTimeout.Location = new System.Drawing.Point(20, 140);
+        this.b_ColorTimeout.Location = new System.Drawing.Point(20, 200);
         this.b_ColorTimeout.Name = "b_ColorTimeScore";
         this.b_ColorTimeout.Size = new System.Drawing.Size(240, 17);
         this.b_ColorTimeout.TabIndex = 2;
@@ -94,22 +128,22 @@ partial class Form0
         this.b_ColorTimeout.Click += new System.EventHandler(this.choseColorTimeout);
 
 
-        this.l_defaultTime.Location = new System.Drawing.Point(20, 180);
+        this.l_defaultTime.Location = new System.Drawing.Point(20, 240);
         this.l_defaultTime.Name = "l_upperRowPercentage";
         this.l_defaultTime.Size = new System.Drawing.Size(240, 20);
         this.l_defaultTime.Text = "Spielzeit (Minuten)";
 
-        this.n_defaultTime.Location = new System.Drawing.Point(20, 200);
+        this.n_defaultTime.Location = new System.Drawing.Point(20, 260);
         this.n_defaultTime.Name = "n_defaultTime";
         this.n_defaultTime.Size = new System.Drawing.Size(120, 20);
         this.n_defaultTime.Value = 12;
 
-        this.l_TimeoutTime.Location = new System.Drawing.Point(20, 240);
+        this.l_TimeoutTime.Location = new System.Drawing.Point(20, 300);
         this.l_TimeoutTime.Name = "l_TimeoutTime";
         this.l_TimeoutTime.Size = new System.Drawing.Size(240, 20);
         this.l_TimeoutTime.Text = "Zeitstrafe (Minuten)";
 
-        this.n_TimeoutTime.Location = new System.Drawing.Point(20, 260);
+        this.n_TimeoutTime.Location = new System.Drawing.Point(20, 320);
         this.n_TimeoutTime.Name = "n_TimeoutTime";
         this.n_TimeoutTime.Size = new System.Drawing.Size(120, 20);
         this.n_TimeoutTime.Value = 2;
@@ -130,6 +164,12 @@ partial class Form0
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         this.ClientSize = new System.Drawing.Size(500, 500);
         this.Controls.Add(this.l_upperRowPercentage);
+        this.Controls.Add(this.n_upperRowPercentage);
+
+        this.Controls.Add(this.l_scorePercentage);
+        this.Controls.Add(this.n_scorePercentage);
+
+
         this.Controls.Add(this.buttonSave);
         this.Controls.Add(this.b_ColorTimeScore);
         this.Controls.Add(this.b_ColorTimeout);
@@ -139,7 +179,7 @@ partial class Form0
         this.Controls.Add(this.l_TimeoutTime);
         this.Controls.Add(this.n_TimeoutTime);
 
-        this.Controls.Add(this.n_upperRowPercentage);
+        
         
         this.Name = "ConfigForm";
         this.Text = "Configuration";
